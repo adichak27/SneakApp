@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.cs4520.assignment5'
+    namespace 'com.cs4520.sneak'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.cs4520.assignment5"
+        applicationId "com.cs4520.sneak"
         minSdk 24
         targetSdk 33
         versionCode 1
