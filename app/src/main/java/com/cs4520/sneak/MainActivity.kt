@@ -1,4 +1,4 @@
-package com.cs4520.assignment4
+package com.cs4520.sneak
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
