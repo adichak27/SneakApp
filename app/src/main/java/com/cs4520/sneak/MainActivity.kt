@@ -1,10 +1,7 @@
 package com.cs4520.sneak
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,15 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.fragment.NavHostFragment
-import com.cs4520.sneak.R
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cs4520.sneak.model.ProductListViewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -266,7 +261,7 @@ fun RegisterNewUser(navController: NavHostController) {
         Spacer(modifier = Modifier.height(20.dp))
 
 
-        // Password TextField
+        // Email TextField
         TextField(
             value = email,
             onValueChange = { email = it },
@@ -296,7 +291,7 @@ fun RegisterNewUser(navController: NavHostController) {
         // Confirm Button
         Button(
             onClick = {
-                // Logic for changing password
+                // Logic for registering new user
             }
         ) {
             Text("Register")

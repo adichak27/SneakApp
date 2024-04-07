@@ -1,4 +1,4 @@
-package com.cs4520.sneak
+package com.cs4520.sneak.model
 
 import androidx.lifecycle.ViewModel
 
