@@ -14,8 +14,8 @@ interface UserDao {
     @Query("select * from user_table")
     fun getAllUsers(): List<Users>
 
-    @Query("select * from user_table u where u.username = :username")
-    fun getUser(username: String): Users
+    @Query("select * from user_table u where u.username = :username and u.password = :password")
+    fun getUser(username: String, password:String): Users?
 
     @Query("Update user_table set password = :newPass, username = :newName where username = :username")
     fun editUser(username: String, newName: String, newPass: String)

@@ -10,7 +10,7 @@ interface ApiService {
 
 
     @GET(SneakApi.USERS)
-    suspend fun getUsers(@Query("username") username: String?): Response<List<User>>
+    suspend fun getUsers(): Response<List<User>>
 
     @GET(SneakApi.SHOES)
     suspend fun getShoes(): Response<List<Shoe>>
