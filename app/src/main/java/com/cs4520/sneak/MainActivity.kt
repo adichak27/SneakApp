@@ -237,7 +237,73 @@ fun PasswordReset(navController: NavHostController) {
 
 @Composable
 fun RegisterNewUser(navController: NavHostController) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
 
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // App title text
+        Text(text = "$" + "neak",
+            fontFamily = FontFamily.Serif,
+            fontSize = 30.sp, // adjust the size
+            modifier = Modifier.padding(bottom = 85.dp) // add space at the bottom
+        )
+
+        // Add a spacer after the login input boxes
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(text = "Create Account:",
+            fontFamily = FontFamily.Monospace,
+            fontSize = 20.sp, // adjust the size
+            modifier = Modifier.padding(bottom = 5.dp) // add space at the bottom
+        )
+
+        // Add a spacer after the login input boxes
+        Spacer(modifier = Modifier.height(20.dp))
+
+
+        // Password TextField
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+        )
+
+        // Username TextField
+        TextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Username") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+        )
+
+        // Password TextField
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+        )
+
+        // Add a spacer after the text boxes
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Confirm Button
+        Button(
+            onClick = {
+                // Logic for changing password
+            }
+        ) {
+            Text("Register")
+        }
+        Spacer(modifier = Modifier.height(100.dp))
+
+    }
 }
 
 @Composable
@@ -258,5 +324,5 @@ fun ThanksScreen(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    PasswordReset(rememberNavController())
+    RegisterNewUser(rememberNavController())
 }

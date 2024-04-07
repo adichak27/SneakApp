@@ -59,6 +59,5 @@ class UserRepository(val userDao: UserDao) {
 
     private fun convertToUsersList(users: List<User>): List<Users> {
         return users.map { it.toUsers() }
-
     }
 }
