@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Shoes::class, Users::class], version = 1,exportSchema = false)
+@Database(entities = [Shoe::class, User::class], version = 1,exportSchema = false)
 abstract class SneakDB: RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun shoeDao(): ShoeDao

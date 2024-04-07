@@ -1,23 +1,20 @@
 package com.cs4520.sneak.data
 
 import android.util.Log
+import com.cs4520.sneak.data.database.User
 import com.cs4520.sneak.data.database.UserDao
-import com.cs4520.sneak.data.database.Users
-import com.cs4520.sneak.data.database.toUser
-import com.cs4520.sneak.model.User
-import com.cs4520.sneak.model.toUsers
 
 class UserRepository(val userDao: UserDao) {
 
     private val apiService = SneakApi.apiService
 
-    suspend fun getAllUsers(): List<Users> {
+    suspend fun getAllUsers(): List<User> {
 
         return try {
             val response = apiService.getUsers()
             if (response.isSuccessful) {
 
-                convertToUsersList(response.body() ?: emptyList())
+                response.body() ?: emptyList()
 
             } else {
                 throw Exception("Error Occurred: ${response.body()}")
@@ -30,16 +27,15 @@ class UserRepository(val userDao: UserDao) {
         }
     }
 
-    fun loadUsersToDb(users: List<Users>) {
+    fun loadUsersToDb(users: List<User>) {
        for(user in users){
            userDao.insert(user)
        }
     }
 
     fun getUserFromDb(userName: String, password: String): User {
-        val userFromDb = userDao.getUser(userName, password)
+        return userDao.getUser(userName, password)
             ?: throw NoSuchElementException("No user with $userName and $password")
-        return userFromDb.toUser()
     }
 
     fun editUser(userName: String, newName:String?, newPassword:String){
@@ -53,11 +49,8 @@ class UserRepository(val userDao: UserDao) {
     }
 
     fun registerNewUser(userName: String, email:String, password:String) {
-        val newUser = Users(userName, email, password)
+        val newUser = User(userName, email, password)
         userDao.insert(newUser)
     }
 
-    private fun convertToUsersList(users: List<User>): List<Users> {
-        return users.map { it.toUsers() }
-    }
 }

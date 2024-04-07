@@ -1,7 +1,8 @@
 package com.cs4520.sneak.data
 
-import com.cs4520.sneak.model.Shoe
-import com.cs4520.sneak.model.User
+import com.cs4520.sneak.data.database.Shoe
+import com.cs4520.sneak.data.database.User
+
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -9,13 +9,13 @@ import androidx.room.Query
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(user: Users)
+    fun insert(user: User)
 
     @Query("select * from user_table")
-    fun getAllUsers(): List<Users>
+    fun getAllUsers(): List<User>
 
     @Query("select * from user_table u where u.username = :username and u.password = :password")
-    fun getUser(username: String, password:String): Users?
+    fun getUser(username: String, password:String): User?
 
     @Query("Update user_table set password = :newPass, username = :newName where username = :username")
     fun editUser(username: String, newName: String, newPass: String)

@@ -8,8 +8,8 @@ import androidx.room.Query
 @Dao
 interface ShoeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShoe(shoe: Shoes)
+    fun insertShoe(shoe: Shoe)
 
     @Query("select * from shoes_table")
-    fun getAllShoes(): List<Shoes>
+    fun getAllShoes(): List<Shoe>
 }
