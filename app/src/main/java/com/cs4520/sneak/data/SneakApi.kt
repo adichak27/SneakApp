@@ -5,8 +5,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object SneakApi {
     private const val BASE_URL: String = "https://bhampstead.pythonanywhere.com/sneak/"
-    const val USERS: String = "users/"
-    const val SHOES: String = "shoes/"
+    const val USERS: String = "users"
+    const val SHOES: String = "shoes"
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
