@@ -1,6 +1,7 @@
 package com.cs4520.sneak
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +37,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cs4520.sneak.data.UserRepository
+import com.cs4520.sneak.data.database.SneakDB
 import com.cs4520.sneak.model.ProductListViewModel
+import com.cs4520.sneak.model.UserListViewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +50,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // TODO: Do we need view model in MainActivity?
-       // val vm: ProductViewModel by viewModel()
+       //val vm: ProductListViewModel by viewModel()
+
 
         // Using ProcessLifecycleOwner to observe app lifecycle changes
         ProcessLifecycleOwner.get().lifecycle.addObserver(LifecycleEventObserver { _, event ->
@@ -88,11 +94,18 @@ fun AmazingProductsApp() {
 }
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewModel()) {
     // MutableState for username and password fields
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val errorMessage by vm.error.collectAsState(null)
     val context = LocalContext.current
+
+    val userDao = SneakDB.getInstance(context).userDao()
+    val repo = UserRepository(userDao)
+
+    vm.initialize(repo)
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -127,7 +140,21 @@ fun LoginScreen(navController: NavHostController) {
         // Login Button
         Button(
             onClick = {
-                // Logic for login
+                vm.getUser(username, password)
+                if (errorMessage == null) {
+                    if (username == vm.currentUser.value.username && password == vm.currentUser.value.password) {
+                        // Display success login message
+                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                        // Navigate to ProductListFragment
+                        navController.navigate("productList")
+                    } else {
+                        // Display failed login message
+                        Toast.makeText(context, "Invalid Login Info", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                }
+
             }
         ) {
             Text("Login")
@@ -139,6 +166,7 @@ fun LoginScreen(navController: NavHostController) {
         // Forgot Password Button
         Button(
             onClick = {
+                      navController.navigate("resetPassword")
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.LightGray,
@@ -154,6 +182,7 @@ fun LoginScreen(navController: NavHostController) {
         // Create Account Button
         Button(
             onClick = {
+                      navController.navigate("newUser")
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.LightGray,
@@ -231,10 +260,16 @@ fun PasswordReset(navController: NavHostController) {
 }
 
 @Composable
-fun RegisterNewUser(navController: NavHostController) {
+fun RegisterNewUser(navController: NavHostController, vm: UserListViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    val userDao = SneakDB.getInstance(context).userDao()
+    val repo = UserRepository(userDao)
+
+    vm.initialize(repo)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -291,7 +326,10 @@ fun RegisterNewUser(navController: NavHostController) {
         // Confirm Button
         Button(
             onClick = {
-                // Logic for registering new user
+                vm.addUser(username, email, password)
+                navController.navigate("login")
+                Toast.makeText(context, "Successfully created account", Toast.LENGTH_LONG).show()
+
             }
         ) {
             Text("Register")
