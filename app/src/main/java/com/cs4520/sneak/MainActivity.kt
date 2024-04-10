@@ -15,6 +15,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -100,11 +101,18 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
     var password by remember { mutableStateOf("") }
     val errorMessage by vm.error.collectAsState(null)
     val context = LocalContext.current
+    // Observe changes to currentUser LiveData
+    val currentUser by vm.currentUser.collectAsState()
 
     val userDao = SneakDB.getInstance(context).userDao()
     val repo = UserRepository(userDao)
 
     vm.initialize(repo)
+
+    // Fetch the products when we launch this screen
+    LaunchedEffect(Unit) {
+        vm.fetchUsers()
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -140,9 +148,9 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
         // Login Button
         Button(
             onClick = {
-                vm.getUser(username, password)
-                if (errorMessage == null) {
-                    if (username == vm.currentUser.value.username && password == vm.currentUser.value.password) {
+                vm.setCurrentUser(username, password)
+                if (currentUser != null) {
+                    if (username == currentUser!!.username && password == currentUser!!.password) {
                         // Display success login message
                         Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
                         // Navigate to ProductListFragment
@@ -151,9 +159,21 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
                         // Display failed login message
                         Toast.makeText(context, "Invalid Login Info", Toast.LENGTH_LONG).show()
                     }
-                } else {
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
+
+//                if (errorMessage == null) {
+//                    if (username == currentUser.username && password == currentUser.password) {
+//                        // Display success login message
+//                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+//                        // Navigate to ProductListFragment
+//                        navController.navigate("productList")
+//                    } else {
+//                        // Display failed login message
+//                        Toast.makeText(context, "Invalid Login Info", Toast.LENGTH_LONG).show()
+//                    }
+//                } else {
+//                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+//                }
 
             }
         ) {
