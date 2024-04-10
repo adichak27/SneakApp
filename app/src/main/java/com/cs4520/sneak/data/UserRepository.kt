@@ -6,6 +6,7 @@ import com.cs4520.sneak.data.database.UserDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+// TODO: Potentially make interface for repo
 class UserRepository(val userDao: UserDao) {
 
     private val apiService = SneakApi.apiService
@@ -30,18 +31,14 @@ class UserRepository(val userDao: UserDao) {
     }
 
     suspend fun loadUsersToDb(users: List<User>) {
-        withContext(Dispatchers.IO) {
             for (user in users) {
                 userDao.insert(user)
             }
-        }
     }
 
-    suspend fun getUserFromDb(userName: String, password: String) : User {
-        return withContext(Dispatchers.IO) {
-            val user = userDao.getUser(userName, password)
-            user ?: throw NoSuchElementException("No user with $userName and $password")
-        }
+    fun getUserFromDb(userName: String, password: String) : User {
+        val user = userDao.getUser(userName, password)
+        return user ?: throw NoSuchElementException("No user with $userName and $password")
     }
 
     suspend fun editUser(userName: String, newName:String?, newPassword:String){

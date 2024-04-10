@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cs4520.sneak.data.UserRepository
 import com.cs4520.sneak.data.database.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,8 +16,8 @@ class UserListViewModel() : ViewModel() {
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> get() = _users
 
-    private val _currentUser = MutableStateFlow<User>(User("","",""))
-    val currentUser: StateFlow<User> get() = _currentUser
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> get() = _currentUser
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> get() = _error
@@ -27,8 +28,9 @@ class UserListViewModel() : ViewModel() {
     }
 
     // Retrieves the user list from the repository in a coroutine
+    // TODO: Potentially move to Repository
     fun fetchUsers() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 // Try fetching the products from the repo
                 val userList = repo.getAllUsers()
@@ -46,21 +48,18 @@ class UserListViewModel() : ViewModel() {
 
     // Adds a new user to the user repository
     fun addUser(userName: String, email : String, password : String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.registerNewUser(userName, email, password)
         }
     }
 
-    fun getUser(userName: String, password: String) {
-        viewModelScope.launch {
+    fun setCurrentUser(userName: String, password: String) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 _currentUser.value = repo.getUserFromDb(userName, password)
             } catch (e: Exception) {
                 _error.value = e.message
             }
-
         }
     }
-
-
 }

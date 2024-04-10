@@ -13,6 +13,11 @@ interface ApiService {
     @GET(SneakApi.USERS)
     suspend fun getUsers(): Response<List<User>>
 
+    // TODO: ADD INSERT USER API CALL
+
+    // TODO: ADD EDIT USER API CALL
+
+    // TODO: ADD SEARCH BY USERNAME AND PASSWORD API CALL
     @GET(SneakApi.SHOES)
     suspend fun getShoes(): Response<List<Shoe>>
 
