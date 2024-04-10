@@ -22,6 +22,8 @@ interface ApiService {
     @POST(SneakApi.USERS + "/{userName}")
     suspend fun editUser(@Path(value="userName")userName: String,
                          @Body body: Map<String, String>): Response<Any>
+    @POST(SneakApi.USERS + "/new")
+    suspend fun addNewUser(@Body body: Map<String, String>): Response<Any>
 
     @GET(SneakApi.SHOES)
     suspend fun getShoes(): Response<List<Shoe>>

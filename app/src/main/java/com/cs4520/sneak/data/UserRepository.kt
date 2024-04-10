@@ -61,6 +61,23 @@ class UserRepository(val userDao: UserDao) {
         }
     }
 
+    suspend fun addNewUser(body: Map<String, String>) {
+        // body would just be a
+        // mapOf("email" to "<email", "username" to "<username>", "password" to "<newPass>) I think
+        try {
+            val response = apiService.addNewUser(body)
+            if (response.isSuccessful) {
+                Log.w("UserRepo", "Added new User ${body["username"]}")
+            } else {
+                throw Exception("Error Occurred: ${response.body()}")
+            }
+        } catch (ex: Exception) {
+            Log.e("UserRepo", "Error adding user ${body["username"]}", ex)
+            throw Exception("Error Occurred: ${ex.message}")
+
+        }
+    }
+
     suspend fun loadUsersToDb(users: List<User>) {
             for (user in users) {
                 userDao.insert(user)
