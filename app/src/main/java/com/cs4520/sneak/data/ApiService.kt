@@ -16,11 +16,11 @@ interface ApiService {
     @GET(SneakApi.USERS)
     suspend fun getUsers(): Response<List<User>>
 
-    @GET(SneakApi.USERS + "/{userName}")
-    suspend fun getUser(@Path(value="userName")userName: String): Response<User>
+    @GET(SneakApi.USERS)
+    suspend fun getUser(@Query(value="user")userName: String): Response<User>
 
-    @POST(SneakApi.USERS + "/{userName}")
-    suspend fun editUser(@Path(value="userName")userName: String,
+    @POST(SneakApi.USERS)
+    suspend fun editUser(@Query(value="user")userName: String,
                          @Body body: Map<String, String>): Response<Any>
     @POST(SneakApi.USERS + "/new")
     suspend fun addNewUser(@Body body: Map<String, String>): Response<Any>
