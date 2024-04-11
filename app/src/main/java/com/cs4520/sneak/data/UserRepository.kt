@@ -67,12 +67,12 @@ class UserRepository(val userDao: UserDao) {
         try {
             val response = apiService.addNewUser(body)
             if (response.isSuccessful) {
-                Log.w("UserRepo", "Added new User ${body["username"]}")
+                Log.w("UserRepo", "Added new User ${body["message"]}")
             } else {
                 throw Exception("Error Occurred: ${response.body()}")
             }
         } catch (ex: Exception) {
-            Log.e("UserRepo", "Error adding user ${body["username"]}", ex)
+            Log.e("UserRepo", "Error adding user ${body["message"]}", ex)
             throw Exception("Error Occurred: ${ex.message}")
 
         }
