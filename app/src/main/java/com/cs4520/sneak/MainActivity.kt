@@ -148,7 +148,7 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
         // Login Button
         Button(
             onClick = {
-                vm.setCurrentUser(username, password)
+                vm.setCurrentUser(username)
                 if (currentUser != null) {
                     if (username == currentUser!!.username && password == currentUser!!.password) {
                         // Display success login message

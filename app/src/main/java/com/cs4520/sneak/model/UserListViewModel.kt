@@ -49,14 +49,14 @@ class UserListViewModel() : ViewModel() {
     // Adds a new user to the user repository
     fun addUser(userName: String, email : String, password : String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.registerNewUser(userName, email, password)
+            //repo.addNewUser(userName, email, password)
         }
     }
 
-    fun setCurrentUser(userName: String, password: String) {
+    fun setCurrentUser(userName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _currentUser.value = repo.getUserFromDb(userName, password)
+                _currentUser.value = repo.getUser(userName)
             } catch (e: Exception) {
                 _error.value = e.message
             }
