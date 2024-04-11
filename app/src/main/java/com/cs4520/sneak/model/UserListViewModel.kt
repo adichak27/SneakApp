@@ -19,8 +19,11 @@ class UserListViewModel() : ViewModel() {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> get() = _currentUser
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> get() = _error
+    private val _loginError = MutableStateFlow<String?>(null)
+    val loginError: StateFlow<String?> get() = _loginError
+
+    private val _resetPasswordError = MutableStateFlow<String?>(null)
+    val resetPasswordError: StateFlow<String?> get() = _resetPasswordError
 
     // Initialize the repository
     fun initialize(repository: UserRepository) {
@@ -41,7 +44,7 @@ class UserListViewModel() : ViewModel() {
                 }
             } catch (e: Exception) {
                 // Catch any error exception and set it to the error value
-                _error.value = e.message
+                _loginError.value = e.message
             }
         }
     }
@@ -49,7 +52,12 @@ class UserListViewModel() : ViewModel() {
     // Adds a new user to the user repository
     fun addUser(userName: String, email : String, password : String) {
         viewModelScope.launch(Dispatchers.IO) {
-            //repo.addNewUser(userName, email, password)
+            val body = mapOf(
+                "email" to email,
+                "username" to userName,
+                "password" to password
+            )
+            repo.addNewUser(body)
         }
     }
 
@@ -58,8 +66,29 @@ class UserListViewModel() : ViewModel() {
             try {
                 _currentUser.value = repo.getUser(userName)
             } catch (e: Exception) {
-                _error.value = e.message
+                _loginError.value = e.message
             }
         }
+    }
+
+    fun clearLoginError() {
+        _loginError.value = null
+    }
+
+    fun editUser(userName: String, newPassword: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val body = mapOf("password" to newPassword)
+            try {
+                repo.editUser(userName, body)
+                println("Editing user: $userName")
+            } catch (e: Exception) {
+                _resetPasswordError.value = e.message
+                println("Editing user error: " +  _resetPasswordError.value)
+            }
+        }
+    }
+
+    fun clearResetPasswordError() {
+        _resetPasswordError.value = null
     }
 }

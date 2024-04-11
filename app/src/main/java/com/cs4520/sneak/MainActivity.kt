@@ -1,5 +1,4 @@
 package com.cs4520.sneak
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -60,7 +59,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.cs4520.assignment5.R
 import com.cs4520.sneak.data.UserRepository
 import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.data.database.SneakDB
@@ -123,7 +121,7 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
     // MutableState for username and password fields
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val errorMessage by vm.error.collectAsState(null)
+    val errorMessage by vm.loginError.collectAsState(null)
     val context = LocalContext.current
     // Observe changes to currentUser LiveData
     val currentUser by vm.currentUser.collectAsState()
@@ -136,6 +134,7 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
     // Fetch the products when we launch this screen
     LaunchedEffect(Unit) {
         vm.fetchUsers()
+        println("users: " + vm.fetchUsers())
     }
 
     Column(
@@ -173,32 +172,25 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
         Button(
             onClick = {
                 vm.setCurrentUser(username)
-                if (currentUser != null) {
-                    if (username == currentUser!!.username && password == currentUser!!.password) {
-                        // Display success login message
-                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                        // Navigate to ProductListFragment
-                        navController.navigate("productList")
+                if (errorMessage == null) {
+                    if (currentUser != null) {
+                        if (username == currentUser!!.username && password == currentUser!!.password) {
+                            // Display success login message
+                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                            // Navigate to ProductListFragment
+                            navController.navigate("productList")
+                        } else {
+                            // Display failed login message
+                            Toast.makeText(context, "Invalid Login Info", Toast.LENGTH_LONG).show()
+                        }
                     } else {
-                        // Display failed login message
                         Toast.makeText(context, "Invalid Login Info", Toast.LENGTH_LONG).show()
                     }
+                } else {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
-
-//                if (errorMessage == null) {
-//                    if (username == currentUser.username && password == currentUser.password) {
-//                        // Display success login message
-//                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-//                        // Navigate to ProductListFragment
-//                        navController.navigate("productList")
-//                    } else {
-//                        // Display failed login message
-//                        Toast.makeText(context, "Invalid Login Info", Toast.LENGTH_LONG).show()
-//                    }
-//                } else {
-//                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-//                }
-
+                // Clears login error value after an attempt
+                vm.clearLoginError()
             }
         ) {
             Text("Login")
@@ -239,9 +231,19 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
 }
 
 @Composable
-fun PasswordReset(navController: NavHostController) {
+fun PasswordReset(navController: NavHostController, vm: UserListViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var confirmNewPassword by remember { mutableStateOf("") }
+    val errorMessage by vm.resetPasswordError.collectAsState(null)
+    val context = LocalContext.current
+
+    val userDao = SneakDB.getInstance(context).userDao()
+    val repo = UserRepository(userDao)
+
+    vm.initialize(repo)
+
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -273,16 +275,16 @@ fun PasswordReset(navController: NavHostController) {
 
         // Password TextField
         TextField(
-            value = password,
-            onValueChange = { password = it },
+            value = newPassword,
+            onValueChange = { newPassword = it },
             label = { Text("New Password") },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
         )
 
         // Password TextField
         TextField(
-            value = password,
-            onValueChange = { password = it },
+            value = confirmNewPassword,
+            onValueChange = { confirmNewPassword = it },
             label = { Text("Confirm New Password") },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
         )
@@ -293,7 +295,18 @@ fun PasswordReset(navController: NavHostController) {
         // Confirm Button
         Button(
             onClick = {
-                // Logic for changing password
+               if (newPassword != confirmNewPassword) {
+                   Toast.makeText(context, "Passwords Don't Match", Toast.LENGTH_LONG).show()
+               } else {
+                   vm.editUser(username, newPassword)
+                   if (errorMessage == null) {
+                       navController.navigate("login")
+                       Toast.makeText(context, "Successfully Changed Password", Toast.LENGTH_LONG).show()
+                   } else {
+                       Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                   }
+               }
+                vm.clearResetPasswordError()
             }
         ) {
             Text("Confirm")
@@ -373,7 +386,6 @@ fun RegisterNewUser(navController: NavHostController, vm: UserListViewModel = vi
                 vm.addUser(username, email, password)
                 navController.navigate("login")
                 Toast.makeText(context, "Successfully created account", Toast.LENGTH_LONG).show()
-
             }
         ) {
             Text("Register")
