@@ -10,6 +10,9 @@ interface ShoeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertShoe(shoe: Shoe)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(products: List<Shoe>)
+
     @Query("select * from shoes_table")
     fun getAllShoes(): List<Shoe>
 }

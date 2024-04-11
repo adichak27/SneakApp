@@ -2,18 +2,36 @@ package com.cs4520.sneak
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,8 +41,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,12 +60,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cs4520.assignment5.R
 import com.cs4520.sneak.data.UserRepository
+import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.data.database.SneakDB
-import com.cs4520.sneak.model.ProductListViewModel
+import com.cs4520.sneak.model.ProductViewModel
+import com.cs4520.sneak.model.ShoeUiState
 import com.cs4520.sneak.model.UserListViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -51,13 +76,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         // TODO: Do we need view model in MainActivity?
-       //val vm: ProductListViewModel by viewModel()
-
+        val viewModel: ProductViewModel by viewModels()
 
         // Using ProcessLifecycleOwner to observe app lifecycle changes
         ProcessLifecycleOwner.get().lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
-                //viewModel.fetchLatestProductsImmediately()
+                viewModel.fetchLatestShoesImmediately()
             }
         })
     }
@@ -87,7 +111,7 @@ fun AmazingProductsApp() {
         composable("checkout") {
             CheckoutScreen(navController)
         }
-        // Screen 6: Checkout Screen
+        // Screen 6: Thanks Screen
         composable("thanks") {
             ThanksScreen(navController)
         }
@@ -360,8 +384,100 @@ fun RegisterNewUser(navController: NavHostController, vm: UserListViewModel = vi
 }
 
 @Composable
-fun ProductListScreen(navController: NavHostController, vm: ProductListViewModel = viewModel()) {
+fun ProductListScreen(navController: NavHostController, viewModel: ProductViewModel = viewModel()) {
+    // val products by viewModel.products.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Products") }) },
+        content = { padding ->
+            ProductList(uiState, padding)
+        }
+    )
+}
+
+
+@Composable
+fun ProductList(uiState: ShoeUiState, padding: PaddingValues) {
+    when (uiState) {
+        is ShoeUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator() // Show loading indicator
+            }
+        }
+        is ShoeUiState.Success -> {
+            if (uiState.shoes.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No products found")
+                    // this should never execute
+                }
+            } else {
+                LazyColumn(contentPadding = padding) {
+                    items(uiState.shoes) { product ->
+                        ProductItem(product)
+                    }
+                }
+            }
+        }
+        is ShoeUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Error: ${uiState.exception.localizedMessage}") // Show error message
+            }
+        }
+    }
+}
+
+@Composable
+fun ProductItem(shoe: Shoe) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = 4.dp
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = when (shoe.type) {
+                    "Adidas" -> colorResource(id = R.color.adidas_color)
+                    "Converse" -> colorResource(id = R.color.converse_color)
+                    "Nike" -> colorResource(id = R.color.nike_color)
+                    "ASICS" -> colorResource(id = R.color.asics_color)
+                    "Vans" -> colorResource(id = R.color.vans_color)
+                    "Reebok" -> colorResource(id = R.color.reebok_color)
+                    else -> colorResource(id = R.color.default_shoe_color) // Default color if none match
+                })
+                .padding(16.dp)
+        ) {
+            Image(
+                painter = painterResource(
+                    id = when (shoe.type) {
+                        "Adidas" -> R.drawable.adidas
+                        "Converse" -> R.drawable.converse
+                        "Nike" -> R.drawable.nike
+                        "ASICS" -> R.drawable.asics
+                        "Vans" -> R.drawable.vans
+                        "Reebok" -> R.drawable.reebok
+                        else -> R.drawable.equipment // Default image if none match
+                    }
+                ),
+                contentDescription = "Shoe Image",
+                modifier = Modifier
+                    .size(60.dp) // Ensures the image is always 60dp x 60dp
+                    .clip(CircleShape), // Optional: Clips the image to a circle
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(text = shoe.name, style = MaterialTheme.typography.h6)
+                Text(text = "Manufacturer: ${shoe.manufacturer}", style = MaterialTheme.typography.body1)
+                Text(text = "Type: ${shoe.type}", style = MaterialTheme.typography.body2)
+                Text(text = "Price: $${shoe.price}", style = MaterialTheme.typography.body2)
+            }
+        }
+    }
 }
 
 @Composable

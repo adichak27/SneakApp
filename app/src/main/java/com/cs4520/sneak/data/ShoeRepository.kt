@@ -1,32 +1,52 @@
 package com.cs4520.sneak.data
 
+import android.content.Context
 import android.util.Log
+import androidx.room.Room
 import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.data.database.ShoeDao
+import com.cs4520.sneak.data.database.SneakDB
 import com.cs4520.sneak.data.database.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class ShoeRepository(val shoeDao: ShoeDao) {
+object DatabaseClient {
+    private var instance: SneakDB? = null
 
+    fun getDatabase(context: Context): SneakDB {
+        if (instance == null) {
+            synchronized(this) {
+                if (instance == null) {
+                    instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        SneakDB::class.java, "database-name"
+                    ).fallbackToDestructiveMigration().build()
+                }
+            }
+        }
+        return instance!!
+    }
+}
+
+
+class ShoeRepository(context: Context) {
     private val apiService = SneakApi.apiService
+    private val shoeDao = DatabaseClient.getDatabase(context).shoeDao()
 
     suspend fun getAllShoes(): List<Shoe> {
-
-        return try {
+        try {
             val response = apiService.getShoes()
             if (response.isSuccessful) {
-
-                response.body() ?: emptyList()
-
+                val shoes = response.body()!!
+                shoeDao.insertAll(shoes)
+                return shoes
             } else {
-                throw Exception("Error Occurred: ${response.body()}")
+                Log.d("MyTag", "Not successful. going to Fetching DB")
+                return shoeDao.getAllShoes()
             }
-
         } catch (ex: Exception) {
             Log.e("ProductRepository", "Error getting products", ex)
-            emptyList()
-
+            return shoeDao.getAllShoes()
         }
     }
 
@@ -45,4 +65,4 @@ class ShoeRepository(val shoeDao: ShoeDao) {
         }
         return res
     }
-    }
+}
