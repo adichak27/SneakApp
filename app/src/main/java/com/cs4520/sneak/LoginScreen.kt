@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.cs4520.sneak.data.SneakApi
 import com.cs4520.sneak.data.UserRepository
 import com.cs4520.sneak.data.database.SneakDB
 import com.cs4520.sneak.model.UserListViewModel
@@ -44,8 +45,7 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
     // Observe changes to currentUser LiveData
     val currentUser by vm.currentUser.collectAsState()
 
-    val userDao = SneakDB.getInstance(context).userDao()
-    val repo = UserRepository(userDao)
+    val repo = UserRepository(SneakApi.apiService)
 
     vm.initialize(repo)
 
@@ -156,8 +156,7 @@ fun PasswordReset(navController: NavHostController, vm: UserListViewModel = view
     val errorMessage by vm.resetPasswordError.collectAsState(null)
     val context = LocalContext.current
 
-    val userDao = SneakDB.getInstance(context).userDao()
-    val repo = UserRepository(userDao)
+    val repo = UserRepository(SneakApi.apiService)
 
     vm.initialize(repo)
 
