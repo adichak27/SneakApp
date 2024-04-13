@@ -7,9 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 // TODO: Potentially make interface for repo
-class UserRepository(val userDao: UserDao) {
-
-    private val apiService = SneakApi.apiService
+class UserRepository(val apiService: ApiService=SneakApi.apiService ) {
 
     suspend fun getAllUsers(): List<User> {
 
@@ -75,19 +73,6 @@ class UserRepository(val userDao: UserDao) {
             Log.e("UserRepo", "Error adding user ${body["message"]}", ex)
             throw Exception("Error Occurred: ${ex.message}")
 
-        }
-    }
-
-    suspend fun loadUsersToDb(users: List<User>) {
-            for (user in users) {
-                userDao.insert(user)
-            }
-    }
-
-    suspend fun getUserFromDb(userName: String, password: String): User {
-        return withContext(Dispatchers.IO) {
-            val user = userDao.getUser(userName, password)
-            user ?: throw NoSuchElementException("No user with $userName and $password")
         }
     }
 

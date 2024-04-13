@@ -3,24 +3,30 @@ package com.cs4520.assignment4.data
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
+import com.cs4520.sneak.data.ApiService
 import com.cs4520.sneak.data.UserRepository
+import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.data.database.User
 import com.cs4520.sneak.data.database.UserDao
+import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import okhttp3.ResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import retrofit2.Response
 
 class UserRepoTest {
 
-    private val fakeUserDao = FakeUserDao()
-    private val userRepo = UserRepository(fakeUserDao)
+    private val api = mockk<ApiService>()
+    private var userRepo = UserRepository(api)
 
 
 
@@ -44,6 +50,21 @@ class UserRepoTest {
         every { Log.e(any(), any()) } returns 0
     }
 
+    @Before
+    fun makeMockApi() {
+        val initialList = listOf(
+            User("admin", "test@gmail.com", "admin"),
+            User("bob", "fake@gmail.com", "123"),
+            User("brandon", "test@aol.com", "password"),
+            User("pat", "pat@yahoo.com", "sneak")
+        )
+
+        coEvery { api.getUsers()  } returns Response.success(initialList)
+        coEvery { api.getUser("brandon") } returns Response.success(initialList.filter { it.username == "brandon" }[0])
+        coEvery { api.getUser("phil") } returns Response.error(400, ResponseBody.create(null,"fail"))
+    }
+
+
  //
 // {"email": "test@gmail.com", "username": 'admin', "password": 'admin'},
 //    {"email": "fake@gmail.com", "username": 'bob', "password": '123'},
@@ -60,6 +81,7 @@ class UserRepoTest {
             User("brandon", "test@aol.com", "password"),
             User("pat", "pat@yahoo.com", "sneak")
         )
+
 
         val actual = userRepo.getAllUsers()
 
@@ -133,4 +155,5 @@ class UserRepoTest {
         }
 
     }
+
 }
