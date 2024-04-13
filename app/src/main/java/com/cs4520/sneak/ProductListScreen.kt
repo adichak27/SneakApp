@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -28,14 +29,24 @@ fun ProductListScreen(navController: NavHostController, viewModel: ProductViewMo
     Scaffold(
         topBar = { TopAppBar(title = { Text("Products") }) },
         content = { padding ->
-            ProductList(uiState, padding)
+            ProductList(uiState, padding, viewModel)
+        },
+        bottomBar = {
+            // Add a button to navigate to the checkout screen
+            Button(
+                onClick = {
+                    navController.navigate("checkout")
+                }
+            ) {
+                Text("Checkout(" + viewModel.cartItems.value.size + ") items")
+            }
         }
     )
 }
 
 
 @Composable
-fun ProductList(uiState: ShoeUiState, padding: PaddingValues) {
+fun ProductList(uiState: ShoeUiState, padding: PaddingValues, viewModel: ProductViewModel) {
     when (uiState) {
         is ShoeUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -51,7 +62,7 @@ fun ProductList(uiState: ShoeUiState, padding: PaddingValues) {
             } else {
                 LazyColumn(contentPadding = padding) {
                     items(uiState.shoes) { product ->
-                        ProductItem(product)
+                        ProductItem(product, viewModel)
                     }
                 }
             }

@@ -9,4 +9,5 @@ data class Shoe(
     val manufacturer: String,
     val type: String,
     val price : Double,
+    val imageResourceId: Int
 )
