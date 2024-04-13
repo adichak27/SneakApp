@@ -41,11 +41,10 @@ class ShoeRepository(context: Context) {
                 shoeDao.insertAll(shoes)
                 return shoes
             } else {
-                Log.d("MyTag", "Not successful. going to Fetching DB")
                 return shoeDao.getAllShoes()
             }
         } catch (ex: Exception) {
-            Log.e("ProductRepository", "Error getting products", ex)
+
             return shoeDao.getAllShoes()
         }
     }

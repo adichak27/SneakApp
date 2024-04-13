@@ -22,7 +22,6 @@ class UserRepository(val apiService: ApiService=SneakApi.apiService ) {
             }
 
         } catch (ex: Exception) {
-            Log.e("UserRepository", "Error getting products", ex)
             emptyList()
 
         }
@@ -37,7 +36,6 @@ class UserRepository(val apiService: ApiService=SneakApi.apiService ) {
                 throw Exception("Error Occurred: ${response.body()}")
             }
         } catch (ex: Exception) {
-            Log.e("UserRepo", "Error getting users", ex)
             throw Exception("Error Occurred: ${ex.message}")
 
         }
@@ -48,7 +46,7 @@ class UserRepository(val apiService: ApiService=SneakApi.apiService ) {
         try {
             val response = apiService.editUser(userName, body)
             if (response.isSuccessful) {
-                Log.w("UserRepo", "Edited User $userName")
+
             } else {
                 throw Exception("Error Occurred: ${response.body()}")
             }
@@ -65,12 +63,12 @@ class UserRepository(val apiService: ApiService=SneakApi.apiService ) {
         try {
             val response = apiService.addNewUser(body)
             if (response.isSuccessful) {
-                Log.w("UserRepo", "Added new User ${body["message"]}")
+
             } else {
                 throw Exception("Error Occurred: ${response.body()}")
             }
         } catch (ex: Exception) {
-            Log.e("UserRepo", "Error adding user ${body["message"]}", ex)
+
             throw Exception("Error Occurred: ${ex.message}")
 
         }
