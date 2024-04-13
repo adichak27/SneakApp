@@ -40,7 +40,6 @@ class UserListViewModel() : ViewModel() {
                 // Make sure the product list is not null or empty
                 if (!userList.isNullOrEmpty()) {
                     _users.value = userList
-                    repo.loadUsersToDb(userList)
                 }
             } catch (e: Exception) {
                 // Catch any error exception and set it to the error value
