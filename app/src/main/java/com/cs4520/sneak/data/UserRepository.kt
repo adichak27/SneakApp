@@ -24,7 +24,7 @@ class UserRepository(val userDao: UserDao) {
             }
 
         } catch (ex: Exception) {
-            Log.e("ProductRepository", "Error getting products", ex)
+            Log.e("UserRepository", "Error getting products", ex)
             emptyList()
 
         }
