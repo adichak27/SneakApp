@@ -15,6 +15,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -28,6 +29,8 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
+    val cartItems = viewModel.cartItems.observeAsState(listOf()).value
+
     Log.d("ProductItemTag", "Shoe Type is " + shoe.manufacturer)
     Card(
         modifier = Modifier
@@ -118,8 +121,7 @@ fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
                 enabled = true, // Ensure the button is enabled
                 modifier = Modifier.align(Alignment.Bottom),
             ) {
-                Text(if (viewModel.cartItems.value.toMutableList().contains(shoe.name)) "Added" else "Add")
-            }
+                Text(if (cartItems.contains(shoe.name)) "Added" else "Add")            }
         }
     }
 }

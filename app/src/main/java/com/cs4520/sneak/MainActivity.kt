@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.cs4520.sneak.model.ProductViewModel
 
@@ -20,22 +21,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             AmazingProductsApp()
         }
-
-        // TODO: Do we need view model in MainActivity?
-        val viewModel: ProductViewModel by viewModels()
-
-        // Using ProcessLifecycleOwner to observe app lifecycle changes
-        ProcessLifecycleOwner.get().lifecycle.addObserver(LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                viewModel.fetchLatestShoesImmediately()
-            }
-        })
     }
 }
 
 @Composable
 fun AmazingProductsApp() {
     val navController = rememberNavController()
+    val viewModel: ProductViewModel = viewModel()
     NavHost(navController = navController, startDestination = "login") {
         // Screen 1: Login
         composable("login") {
@@ -51,22 +43,17 @@ fun AmazingProductsApp() {
         }
         // Screen 4: Product List
         composable("productList") {
-            ProductListScreen(navController)
+            ProductListScreen(navController, viewModel)
         }
         // Screen 5: Checkout Screen
         composable("checkout") {
-            CheckoutScreen(navController)
+            CheckoutScreen(navController, viewModel)
         }
         // Screen 6: Thanks Screen
         composable("thanks") {
             ThanksScreen(navController)
         }
     }
-}
-
-@Composable
-fun CheckoutScreen(navController: NavHostController) {
-
 }
 
 @Composable

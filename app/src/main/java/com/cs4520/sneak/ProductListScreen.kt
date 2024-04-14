@@ -13,6 +13,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -22,9 +23,12 @@ import com.cs4520.sneak.model.ShoeUiState
 
 
 @Composable
-fun ProductListScreen(navController: NavHostController, viewModel: ProductViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun ProductListScreen(navController: NavHostController, viewModel: ProductViewModel) {
     // val products by viewModel.products.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val cartItems = viewModel.cartItems.observeAsState(listOf()).value
+
+
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Products") }) },
@@ -38,7 +42,7 @@ fun ProductListScreen(navController: NavHostController, viewModel: ProductViewMo
                     navController.navigate("checkout")
                 }
             ) {
-                Text("Checkout(" + viewModel.cartItems.value.size + ") items")
+                Text("Checkout(" + cartItems.size + ") items")
             }
         }
     )

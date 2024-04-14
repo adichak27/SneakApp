@@ -26,6 +26,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import androidx.compose.runtime.State
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.asStateFlow
 
 
 sealed class ShoeUiState {
@@ -37,9 +40,8 @@ sealed class ShoeUiState {
 class ProductViewModel (application: Application) : AndroidViewModel(application) {
     private val repository = ShoeRepository(application)
 
-    private val _cartItems = mutableStateOf<List<String>>(emptyList())
-
-    val cartItems: State<List<String>> = _cartItems
+    private val _cartItems = MutableLiveData<List<String>>(emptyList())
+    val cartItems: LiveData<List<String>> = _cartItems
 
     private val _uiState = MutableStateFlow<ShoeUiState>(ShoeUiState.Loading)
     val uiState: StateFlow<ShoeUiState> = _uiState
@@ -64,17 +66,15 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
         )
     }
     fun toggleCartItem(shoe: Shoe) {
-        val currentCartItems = _cartItems.value.toMutableList()
+        val currentCartItems = _cartItems.value?.toMutableList() ?: mutableListOf()
         if (currentCartItems.contains(shoe.name)) {
             currentCartItems.remove(shoe.name)
             Log.d("RemoveItem", "Shoe is " + shoe.name)
-            Log.d("RemoveItemResult", "Result is " + _cartItems.value.toMutableList().contains(shoe.name))
-
         } else {
             Log.d("AddItem", "Shoe is " + shoe.name)
             currentCartItems.add(shoe.name)
         }
-        _cartItems.value = currentCartItems
+        _cartItems.postValue(currentCartItems)
     }
 
     private fun fetchShoes(page: Int? = null) {
