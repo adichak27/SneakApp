@@ -86,6 +86,17 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
             }
         }
     }
+    fun fetchLatestShoesImmediately() {
+        val workRequest = OneTimeWorkRequestBuilder<FetchProductsWorker>()
+            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+            .build()
+
+        WorkManager.getInstance(getApplication<Application>().applicationContext).enqueueUniqueWork(
+            "FetchLatestProductsWork",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
+    }
 }
 
 class FetchProductsWorker(
