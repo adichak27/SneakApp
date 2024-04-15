@@ -1,5 +1,7 @@
 package com.cs4520.sneak.model
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cs4520.sneak.data.UserRepository
@@ -9,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class UserListViewModel() : ViewModel() {
+class UserListViewModel(application: Application) : AndroidViewModel(application) {
 
     private lateinit var repo: UserRepository
 
