@@ -27,6 +27,81 @@ import com.cs4520.sneak.model.ProductViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import android.graphics.drawable.Drawable
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun GlideImage(
+    imageUrl: String,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    placeholder: Drawable? = null
+) {
+    var image: ImageBitmap? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
+
+    DisposableEffect(imageUrl) {
+        val target = object : CustomTarget<android.graphics.Bitmap>() {
+            override fun onResourceReady(resource: android.graphics.Bitmap, transition: Transition<in android.graphics.Bitmap>?) {
+                image = resource.asImageBitmap()
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+                image = null
+            }
+
+            override fun onLoadFailed(errorDrawable: Drawable?) {
+                super.onLoadFailed(errorDrawable)
+                image = null
+            }
+        }
+
+        Glide.with(context)
+            .asBitmap()
+            .load(imageUrl)
+            .placeholder(placeholder)
+            .into(target)
+
+        onDispose {
+            Glide.with(context).clear(target)
+        }
+    }
+
+    image?.let {
+        Image(
+            bitmap = it,
+            contentDescription = contentDescription,
+            modifier = modifier,
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+
+fun getImageUrlForManufacturer(manufacturer: String): String {
+    return when (manufacturer) {
+        "Nike" -> "https://res.cloudinary.com/dmubfrefi/image/private/s--X0LLoOBX--/c_crop,h_2728,w_4090,x_334,y_0/f_auto/q_auto/v1/dee-about-cms-prod-medias/cf68f541-fc92-4373-91cb-086ae0fe2f88/002-nike-logos-swoosh-white.jpg?_a=BAAAROBs"
+        "Adidas" -> "https://www.shutterstock.com/image-vector/valencia-spain-april-25-2023-600nw-2293213071.jpg"
+        "Vans" -> "https://static.vecteezy.com/system/resources/previews/024/455/429/non_2x/vans-brand-logo-white-symbol-design-icon-abstract-illustration-with-black-background-free-vector.jpg"
+        "Reebok" -> "https://static.vecteezy.com/system/resources/previews/023/869/483/original/reebok-logo-brand-clothes-with-name-red-and-blue-symbol-design-icon-abstract-illustration-free-vector.jpg"
+        "Converse" -> "https://cdn.shopify.com/s/files/1/0558/6413/1764/files/Rewrite_Converse_Logo_Design_History_Evolution_0_1024x1024.jpg?v=1694703129"
+        "ASICS" -> "https://cdn.freebiesupply.com/logos/thumbs/2x/asics-6-logo.png"
+        else -> "https://example.com/default-shoe-image.jpg" // Default image if none match
+    }
+}
+
 
 
 @Composable
@@ -58,23 +133,10 @@ fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
                 )
                 .padding(16.dp)
         ) {
-            Image(
-                painter = painterResource(
-                    id = when (shoe.manufacturer) {
-                        "Adidas" -> R.drawable.adidas
-                        "Converse" -> R.drawable.converse
-                        "Nike" -> R.drawable.nike
-                        "ASICS" -> R.drawable.asics
-                        "Vans" -> R.drawable.vans
-                        "Reebok" -> R.drawable.reebok
-                        else -> R.drawable.equipment // Default image if none match
-                    }
-                ),
+            GlideImage(
+                imageUrl = getImageUrlForManufacturer(shoe.manufacturer),
                 contentDescription = "Shoe Image",
-                modifier = Modifier
-                    .size(100.dp), // Ensures the image is always 60dp x 60dp
-                    //.clip(CircleShape), // Optional: Clips the image to a circle
-                contentScale = ContentScale.Crop
+                modifier = Modifier.size(100.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
