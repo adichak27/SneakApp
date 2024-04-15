@@ -121,7 +121,8 @@ fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
                 enabled = true, // Ensure the button is enabled
                 modifier = Modifier.align(Alignment.Bottom),
             ) {
-                Text(if (cartItems.contains(shoe.name)) "Added" else "Add")            }
+                Text(if (cartItems.any { it.name == shoe.name }) "Added" else "Add")
+            }
         }
     }
 }

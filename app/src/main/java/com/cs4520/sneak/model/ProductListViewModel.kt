@@ -40,8 +40,8 @@ sealed class ShoeUiState {
 class ProductViewModel (application: Application) : AndroidViewModel(application) {
     private val repository = ShoeRepository(application)
 
-    private val _cartItems = MutableLiveData<List<String>>(emptyList())
-    val cartItems: LiveData<List<String>> = _cartItems
+    private val _cartItems = MutableLiveData<List<Shoe>>(emptyList())
+    val cartItems: LiveData<List<Shoe>> = _cartItems
 
     private val _uiState = MutableStateFlow<ShoeUiState>(ShoeUiState.Loading)
     val uiState: StateFlow<ShoeUiState> = _uiState
@@ -67,12 +67,10 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     }
     fun toggleCartItem(shoe: Shoe) {
         val currentCartItems = _cartItems.value?.toMutableList() ?: mutableListOf()
-        if (currentCartItems.contains(shoe.name)) {
-            currentCartItems.remove(shoe.name)
-            Log.d("RemoveItem", "Shoe is " + shoe.name)
+        if (currentCartItems.any { it.name == shoe.name }) {
+            currentCartItems.removeAll { it.name == shoe.name }
         } else {
-            Log.d("AddItem", "Shoe is " + shoe.name)
-            currentCartItems.add(shoe.name)
+            currentCartItems.add(shoe)
         }
         _cartItems.postValue(currentCartItems)
     }

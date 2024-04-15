@@ -51,14 +51,9 @@ fun AmazingProductsApp() {
         }
         // Screen 6: Thanks Screen
         composable("thanks") {
-            ThanksScreen(navController)
+            ThanksScreen(navController, viewModel)
         }
     }
-}
-
-@Composable
-fun ThanksScreen(navController: NavHostController) {
-
 }
 
 @Preview(showBackground = true)
