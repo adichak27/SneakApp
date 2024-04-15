@@ -46,8 +46,17 @@ class UserListViewModel(application: Application) : AndroidViewModel(application
             } catch (e: Exception) {
                 // Catch any error exception and set it to the error value
                 _loginError.value = e.message
+                setLoginErrorMessage(e.message)
             }
         }
+    }
+
+    fun setLoginErrorMessage(error: String?) {
+        _loginError.value = error
+    }
+
+    fun setPasswordErrorMessage(error: String?) {
+        _resetPasswordError.value = error
     }
 
     // Adds a new user to the user repository
@@ -83,7 +92,7 @@ class UserListViewModel(application: Application) : AndroidViewModel(application
                 repo.editUser(userName, body)
                 println("Editing user: $userName")
             } catch (e: Exception) {
-                _resetPasswordError.value = e.message
+                setPasswordErrorMessage(e.message)
                 println("Editing user error: " +  _resetPasswordError.value)
             }
         }

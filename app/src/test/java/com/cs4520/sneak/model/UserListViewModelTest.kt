@@ -2,11 +2,8 @@ package com.cs4520.sneak.model
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import com.cs4520.sneak.data.ApiService
-import com.cs4520.sneak.data.ShoeRepository
 import com.cs4520.sneak.data.UserRepository
-import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.data.database.User
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -17,27 +14,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
-import org.mockito.junit.MockitoJUnit
-import org.mockito.junit.MockitoRule
 import retrofit2.Response
 
 
 class UserListViewModelTest {
     private val api = mockk<ApiService>()
-
-    private var userRepo = UserRepository(api)
 
     private lateinit var userList: List<User>
 
@@ -68,9 +55,7 @@ class UserListViewModelTest {
 
         userListViewModel = UserListViewModel(mockApplication)
 
-
         userListViewModel.initialize(mockUserRepository)
-
     }
 
     @Before
@@ -90,7 +75,7 @@ class UserListViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `test fetchUsers success`() = runTest {
+    fun fetchUsersSuccess() = runTest {
         val userListFlow = MutableStateFlow(userList)
         coEvery { mockUserRepository.getAllUsers() } returns userListFlow.value
 
@@ -101,5 +86,76 @@ class UserListViewModelTest {
         assertEquals(userList, userListViewModel.users.first())
     }
 
+    // TODO: FIX THIS TEST
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun addUserSuccess() = runTest {
+        // Given
+        val userName = "testUser"
+        val email = "test@example.com"
+        val password = "password"
+        val actualUser = User(userName, email, password)
+        val body = mapOf(
+            "email" to email,
+            "username" to userName,
+            "password" to password
+        )
+        coEvery { mockUserRepository.addNewUser(body) } returns Unit // Mocking the repository function to return Unit
+
+        // When
+        userListViewModel.addUser(userName, email, password)
+
+        // Then
+        coEvery { mockUserRepository.addNewUser(body) } // Ensure the function is called with the correct parameters
+
+        assertEquals(listOf(actualUser), userListViewModel.users.first())
+    }
+
+    @Test
+    fun setCurrentUserSuccess() {
+
+    }
+
+    @Test
+    fun editUserSuccess() {
+
+    }
+
+    @Test
+    fun setLoginErrorMessageSuccess() {
+        userListViewModel.setLoginErrorMessage("Error message")
+        assertEquals("Error message", userListViewModel.loginError.value)
+
+    }
+    @Test
+    fun setPasswordErrorMessageSuccess() {
+        userListViewModel.setPasswordErrorMessage("Error message")
+        assertEquals("Error message", userListViewModel.resetPasswordError.value)
+    }
+
+
+    @Test
+    fun clearLoginErrorSuccess() {
+        // Given
+        userListViewModel.setLoginErrorMessage("Error message")
+
+        // When
+        userListViewModel.clearLoginError()
+
+        // Then
+        assertEquals(null, userListViewModel.loginError.value)
+    }
+
+    @Test
+    fun clearResetPasswordErrorSuccess() {
+        // Given
+        userListViewModel.setPasswordErrorMessage("Error message")
+
+        // When
+        userListViewModel.clearResetPasswordError()
+
+        // Then
+        assertEquals(null, userListViewModel.resetPasswordError.value)
+    }
 
 }
