@@ -5,18 +5,12 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
-import androidx.work.Configuration
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
-import androidx.work.impl.utils.SynchronousExecutor
-import androidx.work.testing.WorkManagerTestInitHelper
 import com.cs4520.sneak.data.ShoeRepoTest
 import com.cs4520.sneak.data.ApiService
 import com.cs4520.sneak.data.DatabaseClient
 import com.cs4520.sneak.data.ShoeRepository
 import com.cs4520.sneak.data.SneakApi
 import com.cs4520.sneak.data.database.Shoe
-import com.cs4520.sneak.model.FetchProductsWorker
 import com.cs4520.sneak.model.ProductViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -59,7 +53,7 @@ class ProductListViewModelTest {
     @MockK
     private lateinit var mockCartItemsList: Observer<List<Shoe>>
 
-    private var mockWorkManager = mockk<FetchProductsWorker>(relaxed = true)
+
 
 
 
@@ -82,11 +76,11 @@ class ProductListViewModelTest {
 
         MockKAnnotations.init(this)
 
-        val config = Configuration.Builder()
-            // Use a SynchronousExecutor for testing
-            .setExecutor(SynchronousExecutor())
-            .build()
-        WorkManagerTestInitHelper.initializeTestWorkManager(mockContext, config)
+//        val config = Configuration.Builder()
+//            // Use a SynchronousExecutor for testing
+//            .setExecutor(SynchronousExecutor())
+//            .build()
+//        WorkManagerTestInitHelper.initializeTestWorkManager(mockContext, config)
 
 
         every {
