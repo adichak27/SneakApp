@@ -48,23 +48,8 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
 
     init {
         fetchShoes()
-        scheduleFetchProductsWork()
     }
 
-    private fun scheduleFetchProductsWork() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val workRequest = PeriodicWorkRequestBuilder<FetchProductsWorker>(1, TimeUnit.HOURS)
-            .setConstraints(constraints)
-            .build()
-
-        WorkManager.getInstance(getApplication<Application>().applicationContext).enqueueUniquePeriodicWork(
-            "FetchProductsWork",
-            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-            workRequest
-        )
-    }
     fun toggleCartItem(shoe: Shoe) {
         val currentCartItems = _cartItems.value?.toMutableList() ?: mutableListOf()
         if (currentCartItems.any { it.name == shoe.name }) {
@@ -84,36 +69,6 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
             } catch (e: Exception) {
                 _uiState.value = ShoeUiState.Error(e)
             }
-        }
-    }
-    fun fetchLatestShoesImmediately() {
-        val workRequest = OneTimeWorkRequestBuilder<FetchProductsWorker>()
-            .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-            .build()
-
-        WorkManager.getInstance(getApplication<Application>().applicationContext).enqueueUniqueWork(
-            "FetchLatestProductsWork",
-            ExistingWorkPolicy.REPLACE,
-            workRequest
-        )
-    }
-}
-
-class FetchProductsWorker(
-    appContext: Context,
-    workerParams: WorkerParameters
-) : CoroutineWorker(appContext, workerParams) {
-
-    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        try {
-            val appContext = applicationContext
-            val repository = ShoeRepository(appContext)
-
-            // Insert shoes into the database, checking for duplicates as needed
-            repository.getAllShoes()
-            Result.success()
-        } catch (e: Exception) {
-            Result.retry()
         }
     }
 }

@@ -57,7 +57,6 @@ class CheckoutScreenTest {
         // Check for Purchase Button
         composeTestRule.onNodeWithTag("PurchaseButton").assertExists()
     }
-/*
     @Test
     fun subtotalTaxTotalDisplaysCorrectly() {
 
@@ -83,7 +82,7 @@ class CheckoutScreenTest {
         composeTestRule.onNodeWithTag("TaxText").assertTextEquals("Tax (6%): $${"%.2f".format(expectedTax)}")
         composeTestRule.onNodeWithTag("TotalText").assertTextEquals("Total: $${"%.2f".format(expectedTotal)}")
     }
-
+/*
     @Test
     fun ensureToastAppearsForInvalidInputs() {
         // Simulate incorrect credit card number input
@@ -99,5 +98,7 @@ class CheckoutScreenTest {
         //onView(withText("Invalid card number: must be 10 digits")).check(matches(isDisplayed()))
         // onView(withText("Invalid month in expiration date: must be between 01 and 12")).check(matches(isDisplayed()))
         // onView(withText("Invalid CVV: must be 3 digits")).check(matches(isDisplayed()))
-    } */
+    }
+
+ */
 }
