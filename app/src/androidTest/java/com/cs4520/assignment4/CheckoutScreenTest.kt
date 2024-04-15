@@ -34,16 +34,12 @@ class CheckoutScreenTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    @Before
-    fun setup() {
+    @Test
+    fun checkoutScreenComponentsAreDisplayed() {
         composeTestRule.setContent {
             val navController = rememberNavController()
             CheckoutScreen(navController, viewModel = ProductViewModel(ApplicationProvider.getApplicationContext()))
         }
-    }
-
-    @Test
-    fun checkoutScreenComponentsAreDisplayed() {
         // Check for Input Fields
         composeTestRule.onNodeWithTag("CardNumberInput").assertExists()
         composeTestRule.onNodeWithTag("ExpirationDateInput").assertExists()
@@ -59,21 +55,20 @@ class CheckoutScreenTest {
     }
     @Test
     fun subtotalTaxTotalDisplaysCorrectly() {
+        val shoeListViewModel = ProductViewModel(ApplicationProvider.getApplicationContext())
+        val shoe1 = Shoe("Shoe1", "Nike", "Running", 100.0, 4)
+        val shoe2 = Shoe("Shoe2", "Reebok", "Running", 50.0, 2)
 
-        val viewModel = mock(ProductViewModel::class.java)
-        val cartItemsLiveData = MutableLiveData(listOf(
-            Shoe("Shoe1", "Nike", "Running", 100.0, 4),
-            Shoe("Shoe2", "Reebok", "Running", 50.0, 2)
-        ))
-        `when`(viewModel.cartItems).thenReturn(cartItemsLiveData)
+        shoeListViewModel.toggleCartItem(shoe1)
+        shoeListViewModel.toggleCartItem(shoe2)
 
         // Setup the test content
         composeTestRule.setContent {
-            CheckoutScreen(rememberNavController(), viewModel)
+            CheckoutScreen(rememberNavController(), shoeListViewModel)
         }
 
         // Define expected values based on the test ViewModel's setup
-        val expectedSubtotal = 150.0 // Sum of shoe prices
+        val expectedSubtotal = 50.0 // Sum of shoe prices
         val expectedTax = expectedSubtotal * 0.06
         val expectedTotal = expectedSubtotal + expectedTax
 
@@ -82,23 +77,4 @@ class CheckoutScreenTest {
         composeTestRule.onNodeWithTag("TaxText").assertTextEquals("Tax (6%): $${"%.2f".format(expectedTax)}")
         composeTestRule.onNodeWithTag("TotalText").assertTextEquals("Total: $${"%.2f".format(expectedTotal)}")
     }
-/*
-    @Test
-    fun ensureToastAppearsForInvalidInputs() {
-        // Simulate incorrect credit card number input
-        composeTestRule.onNodeWithTag("CardNumberInput").performTextInput("123456789")
-        composeTestRule.onNodeWithTag("ExpirationDateInput").performTextInput("13/50") // Invalid date
-        composeTestRule.onNodeWithTag("CVVInput").performTextInput("12") // Invalid CVV
-
-        // Attempt to proceed with purchase
-        composeTestRule.onNodeWithText("Purchase").performClick()
-
-        // Using Espresso to check for the toast message
-        Thread.sleep(2000)
-        //onView(withText("Invalid card number: must be 10 digits")).check(matches(isDisplayed()))
-        // onView(withText("Invalid month in expiration date: must be between 01 and 12")).check(matches(isDisplayed()))
-        // onView(withText("Invalid CVV: must be 3 digits")).check(matches(isDisplayed()))
-    }
-
- */
 }

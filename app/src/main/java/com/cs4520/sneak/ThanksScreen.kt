@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.cs4520.sneak.model.ProductViewModel
@@ -32,8 +33,15 @@ fun ThanksScreen(navController: NavHostController, viewModel: ProductViewModel) 
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text("Thanks for your purchase!", style = MaterialTheme.typography.h4)
-                Text("Your products will arrive in approximately $numProducts days.", style = MaterialTheme.typography.subtitle1)
+                Text(
+                    "Thanks for your purchase!",
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier.testTag("ThanksForPurchase")
+                )
+                Text(
+                    "Your products will arrive in approximately $numProducts days.",
+                    style = MaterialTheme.typography.subtitle1,
+                    modifier = Modifier.testTag("ShippingText"))
             }
         }
     )
