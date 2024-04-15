@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -81,9 +82,18 @@ fun CheckoutScreen(navController: NavHostController, viewModel: ProductViewModel
                 }
                 item {
                     Spacer(Modifier.height(10.dp))
-                    Text("Subtotal: $${"%.2f".format(subtotal)}", style = MaterialTheme.typography.subtitle1)
-                    Text("Tax (6%): $${"%.2f".format(tax)}", style = MaterialTheme.typography.subtitle1)
-                    Text("Total: $${"%.2f".format(total)}", style = MaterialTheme.typography.subtitle1)
+                    Text(
+                        "Subtotal: $${"%.2f".format(subtotal)}",
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.testTag("SubtotalText"))
+                    Text(
+                        "Tax (6%): $${"%.2f".format(tax)}",
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.testTag("TaxText"))
+                    Text(
+                        "Total: $${"%.2f".format(total)}",
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.testTag("TotalText"))
                     Spacer(Modifier.height(10.dp))
                     // Credit Card Input Form
                     CreditCardForm(cardNumber, expirationDate, cvv) {
@@ -104,6 +114,7 @@ fun CheckoutScreen(navController: NavHostController, viewModel: ProductViewModel
                         modifier = Modifier
                             .padding(16.dp)
                             .fillMaxWidth()
+                            .testTag("PurchaseButton")
                     ) {
                         Text("Purchase")
                     }
@@ -121,7 +132,7 @@ fun CreditCardForm(cardNumber: String, expirationDate: String, cvv: String, onVa
         onValueChange = { onValueChange(Triple(it, expirationDate, cvv)) },
         label = { Text("Card Number") },
         placeholder = { Text("Enter 10 digits") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag("CardNumberInput"),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -130,7 +141,7 @@ fun CreditCardForm(cardNumber: String, expirationDate: String, cvv: String, onVa
         onValueChange = { onValueChange(Triple(cardNumber, it, cvv)) },
         label = { Text("Expiration Date (MM/YY)") },
         placeholder = { Text("MM/YY") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag("ExpirationDateInput"),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -139,7 +150,7 @@ fun CreditCardForm(cardNumber: String, expirationDate: String, cvv: String, onVa
         onValueChange = { onValueChange(Triple(cardNumber, expirationDate, it)) },
         label = { Text("CVV") },
         placeholder = { Text("3 digits") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag("CVVInput"),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
