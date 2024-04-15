@@ -3,6 +3,7 @@ package com.cs4520.sneak
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.model.ProductViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 
 @Composable
@@ -55,36 +57,7 @@ fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
                     }
                 )
                 .padding(16.dp)
-        ) { /*
-            // Use Glide for loading images
-            val painter = rememberImagePainter(
-                request = when (shoe.manufacturer) {
-                    "Adidas" -> R.drawable.adidas
-                    "Converse" -> R.drawable.converse
-                    "Nike" -> R.drawable.nike
-                    "ASICS" -> R.drawable.asics
-                    "Vans" -> R.drawable.vans
-                    "Reebok" -> R.drawable.reebok
-                    else -> R.drawable.equipment // Default image if none match
-                }
-            )
-            Image(
-                painter = painter,
-                contentDescription = "Shoe Image",
-                modifier = Modifier
-                    .size(100.dp), // Ensures the image is always 60dp x 60dp
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(text = shoe.name, style = MaterialTheme.typography.h6)
-                Text(
-                    text = "Manufacturer: ${shoe.manufacturer}",
-                    style = MaterialTheme.typography.body1
-                )
-                Text(text = "Type: ${shoe.type}", style = MaterialTheme.typography.body2)
-                Text(text = "Price: $${shoe.price}", style = MaterialTheme.typography.body2)
-            } */
+        ) {
             Image(
                 painter = painterResource(
                     id = when (shoe.manufacturer) {
@@ -112,16 +85,23 @@ fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
                 )
                 Text(text = "Type: ${shoe.type}", style = MaterialTheme.typography.body2)
                 Text(text = "Price: $${shoe.price}", style = MaterialTheme.typography.body2)
+                // Add button to add item to cart
+
             }
-            // Add button to add item to cart
-            Button(
-                onClick = {
-                    viewModel.toggleCartItem(shoe)
-                },
-                enabled = true, // Ensure the button is enabled
-                modifier = Modifier.align(Alignment.Bottom),
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                // create custom modifier Alignment
+                horizontalArrangement = Arrangement.End
             ) {
-                Text(if (cartItems.any { it.name == shoe.name }) "Added" else "Add")
+                Button(
+                    onClick = {
+                        viewModel.toggleCartItem(shoe)
+                    },
+                    enabled = true,
+                    modifier = Modifier.align(Alignment.Bottom)
+                ) {
+                    Text(if (cartItems.any { it.name == shoe.name }) "Added" else "Add")
+                }
             }
         }
     }
