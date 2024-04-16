@@ -3,6 +3,8 @@ package com.cs4520.assignment4
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -42,8 +44,9 @@ class ThankYouScreenTest {
         val shoe1 = Shoe("Shoe1", "Nike", "Running", 100.0, 4)
         val shoe2 = Shoe("Shoe2", "Reebok", "Running", 50.0, 2)
 
-        shoeListViewModel.toggleCartItem(shoe1)
-        shoeListViewModel.toggleCartItem(shoe2)
+        val shoesLiveData: LiveData<List<Shoe>> = MutableLiveData(listOf(shoe1, shoe2))
+
+        shoeListViewModel.cartItems = shoesLiveData
 
         composeTestRule.setContent {
             val navController = rememberNavController()
@@ -52,7 +55,6 @@ class ThankYouScreenTest {
                 shoeListViewModel
             )
         }
-
 
         composeTestRule.onNodeWithTag("ShippingText").assertTextEquals("Your products will arrive in approximately 2 days.")
     }

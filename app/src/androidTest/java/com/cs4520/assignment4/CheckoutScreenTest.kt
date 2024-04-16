@@ -59,8 +59,8 @@ class CheckoutScreenTest {
         val shoe1 = Shoe("Shoe1", "Nike", "Running", 100.0, 4)
         val shoe2 = Shoe("Shoe2", "Reebok", "Running", 50.0, 2)
 
-        shoeListViewModel.toggleCartItem(shoe1)
-        shoeListViewModel.toggleCartItem(shoe2)
+        val shoesLiveData: LiveData<List<Shoe>> = MutableLiveData(listOf(shoe1, shoe2))
+        shoeListViewModel.cartItems = shoesLiveData
 
         // Setup the test content
         composeTestRule.setContent {
@@ -68,7 +68,7 @@ class CheckoutScreenTest {
         }
 
         // Define expected values based on the test ViewModel's setup
-        val expectedSubtotal = 50.0 // Sum of shoe prices
+        val expectedSubtotal = 150.0 // Sum of shoe prices
         val expectedTax = expectedSubtotal * 0.06
         val expectedTotal = expectedSubtotal + expectedTax
 
