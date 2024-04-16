@@ -13,6 +13,7 @@ import com.cs4520.sneak.data.SneakApi
 import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.model.ProductViewModel
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -20,6 +21,8 @@ import io.mockk.mockkConstructor
 import io.mockk.mockkObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -50,8 +53,6 @@ class ProductListViewModelTest {
     @MockK
     private lateinit var mockShoeRepository: ShoeRepository
 
-    @MockK
-    private lateinit var mockCartItemsList: Observer<List<Shoe>>
 
 
 
@@ -66,7 +67,7 @@ class ProductListViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
-        Dispatchers.setMain(Dispatchers.Unconfined)
+        Dispatchers.setMain(Dispatchers.IO)
 
         MockKAnnotations.init(this)
 
@@ -75,13 +76,32 @@ class ProductListViewModelTest {
             mockApplication.applicationContext
         } returns mockContext
 
+        every { ShoeRepository(mockApplication) } returns mockShoeRepository
+
         shoeListViewModel = ProductViewModel(mockApplication)
 
         mockShoes = listOf(
-            Shoe("Samba", "Adidias", "lifestyle", 100.00, 0),
+            Shoe("Samba", "Adidas", "lifestyle", 100.00, 0),
             Shoe("Air Force", "Nike", "lifestyle", 90.00, 1),
             Shoe("Chuck Taylor All Star", "Converse", "lifestyle", 55.00, 2)
         )
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun testFetchShoesOnInit() = runTest {
+        coEvery {mockShoeRepository.getAllShoes()} returns mockShoes
+
+
+        val actual = shoeListViewModel.uiState.value
+
+
+//        verify { runBlocking { mockShoeRepository.getAllShoes() } }
+        val expected = ShoeUiState.Success(mockShoes)
+
+
+        assertEquals(expected, actual)
+
     }
 
     @Test
@@ -111,6 +131,18 @@ class ProductListViewModelTest {
         // now cart list should be back to zero shoes
         assertEquals(0, shoeListViewModel.cartItems.value?.size ?: 1)
 
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun updateUIStateChangesUIState() = runTest {
+        // state is currently loading
+        assertEquals(ShoeUiState.Loading,shoeListViewModel.uiState.value)
+
+        shoeListViewModel.updateUiState(ShoeUiState.Success(mockShoes))
+
+        // ShoeUiState is updated
+        assertEquals(ShoeUiState.Success(mockShoes),shoeListViewModel.uiState.value)
     }
 }
 
