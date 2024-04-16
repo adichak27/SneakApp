@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
 import com.cs4520.sneak.ProductItem
 import com.cs4520.sneak.model.ProductViewModel
@@ -28,8 +29,6 @@ fun ProductListScreen(navController: NavHostController, viewModel: ProductViewMo
     val uiState by viewModel.uiState.collectAsState()
     val cartItems = viewModel.cartItems.observeAsState(listOf()).value
 
-
-
     Scaffold(
         topBar = { TopAppBar(title = { Text("Products") }) },
         content = { padding ->
@@ -40,9 +39,12 @@ fun ProductListScreen(navController: NavHostController, viewModel: ProductViewMo
             Button(
                 onClick = {
                     navController.navigate("checkout")
-                }
+
+                },
+                modifier = Modifier.testTag("CheckoutTag")
             ) {
-                Text("Checkout(" + cartItems.size + ") items")
+                Text(
+                    "Checkout(" + cartItems.size + ") items")
             }
         }
     )
@@ -72,7 +74,7 @@ fun ProductList(uiState: ShoeUiState, padding: PaddingValues, viewModel: Product
             }
         }
         is ShoeUiState.Error -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().testTag("ErrorTag"), contentAlignment = Alignment.Center) {
                 Text("Error: ${uiState.exception.localizedMessage}") // Show error message
             }
         }
