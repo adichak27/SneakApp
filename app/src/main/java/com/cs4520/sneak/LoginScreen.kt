@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -64,7 +65,7 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
         Text(text = "$" + "neak",
             fontFamily = FontFamily.Serif,
             fontSize = 30.sp, // adjust the size
-            modifier = Modifier.padding(bottom = 85.dp) // add space at the bottom
+            modifier = Modifier.padding(bottom = 85.dp).testTag("LogoText") // add space at the bottom
         )
 
         // Username TextField
@@ -72,7 +73,9 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+            modifier = Modifier.testTag("UsernameField")
+
         )
 
         // Password TextField
@@ -80,7 +83,8 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            modifier = Modifier.testTag("PasswordField")
         )
 
         // Add a spacer after the login input boxes
@@ -110,8 +114,10 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
                 // Clears login error value after an attempt
                 vm.clearLoginError()
             }
+        ,modifier = Modifier.testTag("LoginButton")
         ) {
             Text("Login")
+
         }
 
         // Add a spacer after the login button
@@ -125,7 +131,8 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.LightGray,
                 contentColor = Color.Black
-            )
+            ),
+            modifier = Modifier.testTag("ForgotPasswordButton")
         ) {
             Text("Forgot Password?")
         }
@@ -141,7 +148,8 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.LightGray,
                 contentColor = Color.Black
-            )
+            ),
+            modifier = Modifier.testTag("CreateAccountButton")
         ) {
             Text("Create Account")
         }
