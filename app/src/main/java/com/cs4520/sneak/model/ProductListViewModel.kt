@@ -32,7 +32,7 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     private val repository = ShoeRepository(application)
 
     private val _cartItems = MutableLiveData<List<Shoe>>(emptyList())
-    val cartItems: LiveData<List<Shoe>> = _cartItems
+    var cartItems: LiveData<List<Shoe>> = _cartItems
 
     private val _uiState = MutableStateFlow<ShoeUiState>(ShoeUiState.Loading)
     val uiState: StateFlow<ShoeUiState> = _uiState
