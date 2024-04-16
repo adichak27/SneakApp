@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -52,7 +53,7 @@ fun RegisterNewUserScreen(navController: NavHostController, vm: UserListViewMode
             text = "$" + "neak",
             fontFamily = FontFamily.Serif,
             fontSize = 30.sp, // adjust the size
-            modifier = Modifier.padding(bottom = 85.dp) // add space at the bottom
+            modifier = Modifier.padding(bottom = 85.dp).testTag("LogoText") // add space at the bottom
         )
 
         // Add a spacer after the login input boxes
@@ -62,7 +63,7 @@ fun RegisterNewUserScreen(navController: NavHostController, vm: UserListViewMode
             text = "Create Account:",
             fontFamily = FontFamily.Monospace,
             fontSize = 20.sp, // adjust the size
-            modifier = Modifier.padding(bottom = 5.dp) // add space at the bottom
+            modifier = Modifier.padding(bottom = 5.dp).testTag("CreateAccountText") // add space at the bottom
         )
 
         // Add a spacer after the login input boxes
@@ -74,7 +75,8 @@ fun RegisterNewUserScreen(navController: NavHostController, vm: UserListViewMode
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            modifier = Modifier.testTag("EmailInput")
         )
 
         // Username TextField
@@ -82,7 +84,8 @@ fun RegisterNewUserScreen(navController: NavHostController, vm: UserListViewMode
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+            modifier = Modifier.testTag("UsernameInput")
         )
 
         // Password TextField
@@ -90,7 +93,8 @@ fun RegisterNewUserScreen(navController: NavHostController, vm: UserListViewMode
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            modifier = Modifier.testTag("PasswordInput")
         )
 
         // Add a spacer after the text boxes
@@ -102,7 +106,9 @@ fun RegisterNewUserScreen(navController: NavHostController, vm: UserListViewMode
                 vm.addUser(username, email, password)
                 navController.navigate("login")
                 Toast.makeText(context, "Successfully created account", Toast.LENGTH_LONG).show()
-            }
+            },
+            modifier = Modifier.testTag("ConfirmButton")
+
         ) {
             Text("Register")
         }
