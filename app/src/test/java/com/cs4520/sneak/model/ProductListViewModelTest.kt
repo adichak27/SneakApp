@@ -55,12 +55,6 @@ class ProductListViewModelTest {
 
 
 
-
-
-
-
-
-
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
@@ -75,12 +69,6 @@ class ProductListViewModelTest {
         Dispatchers.setMain(Dispatchers.Unconfined)
 
         MockKAnnotations.init(this)
-
-//        val config = Configuration.Builder()
-//            // Use a SynchronousExecutor for testing
-//            .setExecutor(SynchronousExecutor())
-//            .build()
-//        WorkManagerTestInitHelper.initializeTestWorkManager(mockContext, config)
 
 
         every {
@@ -97,9 +85,32 @@ class ProductListViewModelTest {
     }
 
     @Test
-        fun toggleCartItemSuccessful() {
+    fun toggleCartItemSuccessful() {
         // make sure cart list is empty
         assertEquals(0, shoeListViewModel.cartItems.value?.size ?: 0)
+
+        shoeListViewModel.toggleCartItem(Shoe("Samba", "Adidias", "lifestyle", 100.00, 0))
+
+        // now cart list should have one shoe
+        assertEquals(1, shoeListViewModel.cartItems.value?.size ?: 1)
+
+    }
+
+    @Test
+    fun toggleCartItemOffSuccessful() {
+        // make sure cart list is empty
+        assertEquals(0, shoeListViewModel.cartItems.value?.size ?: 0)
+
+        shoeListViewModel.toggleCartItem(Shoe("Samba", "Adidias", "lifestyle", 100.00, 0))
+
+        // now cart list should have one shoe
+        assertEquals(1, shoeListViewModel.cartItems.value?.size ?: 1)
+
+        shoeListViewModel.toggleCartItem(Shoe("Samba", "Adidias", "lifestyle", 100.00, 0))
+
+        // now cart list should be back to zero shoes
+        assertEquals(0, shoeListViewModel.cartItems.value?.size ?: 1)
+
     }
 }
 

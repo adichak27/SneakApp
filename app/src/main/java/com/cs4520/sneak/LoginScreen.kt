@@ -178,13 +178,13 @@ fun PasswordReset(navController: NavHostController, vm: UserListViewModel = view
         Text(text = "$" + "neak",
             fontFamily = FontFamily.Serif,
             fontSize = 30.sp, // adjust the size
-            modifier = Modifier.padding(bottom = 85.dp) // add space at the bottom
+            modifier = Modifier.padding(bottom = 85.dp).testTag("LogoText") // add space at the bottom
         )
 
         Text(text = "Change Password:",
             fontFamily = FontFamily.Monospace,
             fontSize = 20.sp, // adjust the size
-            modifier = Modifier.padding(bottom = 5.dp) // add space at the bottom
+            modifier = Modifier.padding(bottom = 5.dp).testTag("ChangePasswordText") // add space at the bottom
         )
 
         // Add a spacer after the login input boxes
@@ -195,7 +195,8 @@ fun PasswordReset(navController: NavHostController, vm: UserListViewModel = view
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+            modifier = Modifier.testTag("UserNameInput")
         )
 
         // Password TextField
@@ -203,7 +204,8 @@ fun PasswordReset(navController: NavHostController, vm: UserListViewModel = view
             value = newPassword,
             onValueChange = { newPassword = it },
             label = { Text("New Password") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            modifier = Modifier.testTag("NewPasswordInput")
         )
 
         // Password TextField
@@ -211,7 +213,8 @@ fun PasswordReset(navController: NavHostController, vm: UserListViewModel = view
             value = confirmNewPassword,
             onValueChange = { confirmNewPassword = it },
             label = { Text("Confirm New Password") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            modifier = Modifier.testTag("ConformNewPasswordInput")
         )
 
         // Add a spacer after the text boxes
@@ -232,7 +235,8 @@ fun PasswordReset(navController: NavHostController, vm: UserListViewModel = view
                     }
                 }
                 vm.clearResetPasswordError()
-            }
+            },
+            modifier = Modifier.testTag("ConfirmButton")
         ) {
             Text("Confirm")
         }
