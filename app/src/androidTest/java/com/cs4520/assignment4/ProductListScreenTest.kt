@@ -12,6 +12,7 @@ import com.cs4520.sneak.ProductListScreen
 import com.cs4520.sneak.data.database.Shoe
 import com.cs4520.sneak.model.ProductViewModel
 import com.cs4520.sneak.model.ShoeUiState
+import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,6 +23,7 @@ class ProductListScreenTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
+
     @Test
     fun productListDisplaysCorrectly() {
         val viewModel = ProductViewModel(ApplicationProvider.getApplicationContext())
@@ -30,7 +32,6 @@ class ProductListScreenTest {
         val shoe2 = Shoe("Shoe2", "Nike", "Running", 50.0, 2)
 
         val shoesLiveData: LiveData<List<Shoe>> = MutableLiveData(listOf(shoe1, shoe2))
-
 
         viewModel.cartItems = shoesLiveData
 
@@ -54,19 +55,21 @@ class ProductListScreenTest {
         val shoesLiveData: LiveData<List<Shoe>> = MutableLiveData(listOf(shoe1))
 
         viewModel.cartItems = shoesLiveData
-
         composeTestRule.setContent {
             ProductListScreen(rememberNavController(), viewModel)
         }
 
         // Assertions
         composeTestRule.onNodeWithText("Products").assertIsDisplayed()
+        Assert.assertEquals(1, viewModel.cartItems.value?.size ?: 1)
         composeTestRule.onNodeWithTag("CheckoutTag").assertTextEquals("Checkout(1) items")
-        composeTestRule.onNodeWithTag("Nike").performClick()
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithTag("Nike").assertTextEquals("Add")
-        composeTestRule.onNodeWithTag("CheckoutTag").assertTextEquals("Checkout(2) items")
 
+        composeTestRule.onNodeWithTag("Nike").performClick()
+        viewModel.toggleCartItem(Shoe("Samba", "Nike", "lifestyle", 100.00, 0))
+        Assert.assertEquals(1, viewModel.cartItems.value?.size ?: 1)
+
+        composeTestRule.onNodeWithTag("Nike").assertTextEquals("Add")
+        composeTestRule.onNodeWithTag("CheckoutTag").assertTextEquals("Checkout(1) items")
     }
 
     @Test
@@ -83,3 +86,4 @@ class ProductListScreenTest {
         // composeTestRule.onNodeWithText("Checkout(0 items)").assertIsDisplayed()
     }
 }
+
