@@ -40,6 +40,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -112,7 +113,8 @@ fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .testTag("FieldDisplayTag"),
         elevation = 4.dp
     ) {
         Row(
@@ -160,7 +162,7 @@ fun ProductItem(shoe: Shoe, viewModel: ProductViewModel) {
                         viewModel.toggleCartItem(shoe)
                     },
                     enabled = true,
-                    modifier = Modifier.align(Alignment.Bottom)
+                    modifier = Modifier.align(Alignment.Bottom).testTag(shoe.manufacturer)
                 ) {
                     Text(if (cartItems.any { it.name == shoe.name }) "Added" else "Add")
                 }

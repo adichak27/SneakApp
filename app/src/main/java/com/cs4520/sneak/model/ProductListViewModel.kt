@@ -35,7 +35,11 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
     var cartItems: LiveData<List<Shoe>> = _cartItems
 
     private val _uiState = MutableStateFlow<ShoeUiState>(ShoeUiState.Loading)
-    val uiState: StateFlow<ShoeUiState> = _uiState
+    val uiState: StateFlow<ShoeUiState> = _uiState.asStateFlow()
+
+    fun updateUiState(newState: ShoeUiState) {
+        _uiState.value = newState
+    }
 
     init {
         fetchShoes()
