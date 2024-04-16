@@ -74,7 +74,7 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
             onValueChange = { username = it },
             label = { Text("Username") },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
-            modifier = Modifier.testTag("UsernameField")
+            modifier = Modifier.testTag("UsernameInput")
 
         )
 
@@ -84,7 +84,7 @@ fun LoginScreen(navController: NavHostController, vm: UserListViewModel = viewMo
             onValueChange = { password = it },
             label = { Text("Password") },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-            modifier = Modifier.testTag("PasswordField")
+            modifier = Modifier.testTag("PasswordInput")
         )
 
         // Add a spacer after the login input boxes
