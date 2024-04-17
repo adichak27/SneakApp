@@ -19,14 +19,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AmazingProductsApp()
+            val navController = rememberNavController()
+            AmazingProductsApp(navController)
         }
     }
 }
 
 @Composable
-fun AmazingProductsApp() {
-    val navController = rememberNavController()
+fun AmazingProductsApp(navController: NavHostController) {
+
     val viewModel: ProductViewModel = viewModel()
     NavHost(navController = navController, startDestination = "login") {
         // Screen 1: Login
