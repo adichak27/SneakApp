@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import com.cs4520.sneak.AmazingProductsApp
@@ -11,12 +12,15 @@ import com.cs4520.sneak.MainActivity
 import com.cs4520.sneak.PasswordReset
 import com.cs4520.sneak.RegisterNewUserScreen
 import com.cs4520.sneak.model.UserListViewModel
+import com.google.common.truth.Truth
 import org.junit.Rule
 import org.junit.Test
 
 class ResetPasswordScreenTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    private lateinit var navController: NavHostController
 
     @Test
     fun resetPasswordScreenComponentsAreDisplayed() {
@@ -43,6 +47,7 @@ class ResetPasswordScreenTest {
     fun resetPasswordNavigatesToLoginScreen() {
         composeTestRule.setContent {
             AmazingProductsApp()
+            navController = rememberNavController()
         }
 
 
@@ -61,9 +66,15 @@ class ResetPasswordScreenTest {
         composeTestRule.onNodeWithTag("ConfirmButton").performClick()
 
         // check we are on the login screen
-        composeTestRule.onNodeWithTag("LoginButton").assertExists()
-        composeTestRule.onNodeWithTag("ForgotPasswordButton").assertExists()
-        composeTestRule.onNodeWithTag("CreateAccountButton").assertExists()
+//        composeTestRule.onNodeWithTag("LoginButton").assertExists()
+//        composeTestRule.onNodeWithTag("ForgotPasswordButton").assertExists()
+//        composeTestRule.onNodeWithTag("CreateAccountButton").assertExists()
+        Truth.assertThat(
+            navController
+                .currentDestination
+                ?.route
+                ?.startsWith("login")
+        ).isTrue()
 
     }
 }
