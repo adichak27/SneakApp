@@ -81,28 +81,28 @@ class ResetPasswordScreenTest {
         composeTestRule.onNodeWithTag("ForgotPasswordButton").assertHasClickAction()
         composeTestRule.onNodeWithTag("ForgotPasswordButton").performClick()
 
-        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("ForgotPasswordButton").assertDoesNotExist()
 
 
-//
-//        val movedToForgotPassword = navController.currentBackStackEntry?.destination?.route
-//
-//
-//        assertEquals("resetPassword", movedToForgotPassword)
 
-//        // on forgot password screen, change the password of the user brandon
-//        val userName = "brandon"
-//        composeTestRule.onNodeWithTag("UserNameInput").performTextInput(userName)
-//
-//        val newPassword = "newPassword"
-//        composeTestRule.onNodeWithTag("NewPasswordInput").performTextInput(newPassword)
-//        val confirmPassword = "newPassword"
-//        composeTestRule.onNodeWithTag("ConformNewPasswordInput").performTextInput(confirmPassword)
-//
-//        composeTestRule.onNodeWithTag("ConfirmButton").performClick()
-//
-//        // check we are on the login screen
-//        val route = navController.currentBackStackEntry?.destination?.route
-//        assertEquals("login", route)
+        val movedToForgotPassword = navController.currentBackStackEntry?.destination?.route
+
+
+        assertEquals("resetPassword", movedToForgotPassword)
+
+        // on forgot password screen, change the password of the user brandon
+        val userName = "brandon"
+        composeTestRule.onNodeWithTag("UserNameInput").performTextInput(userName)
+
+        val newPassword = "newPassword"
+        composeTestRule.onNodeWithTag("NewPasswordInput").performTextInput(newPassword)
+        val confirmPassword = "newPassword"
+        composeTestRule.onNodeWithTag("ConformNewPasswordInput").performTextInput(confirmPassword)
+
+        composeTestRule.onNodeWithTag("ConfirmButton").performClick()
+
+        // check we are on the login screen
+        val route = navController.currentBackStackEntry?.destination?.route
+        assertEquals("login", route)
     }
 }
