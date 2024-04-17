@@ -51,10 +51,12 @@ class UserListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // Set the login error message
     fun setLoginErrorMessage(error: String?) {
         _loginError.value = error
     }
 
+    // Set the password error message
     fun setPasswordErrorMessage(error: String?) {
         _resetPasswordError.value = error
     }
@@ -71,6 +73,7 @@ class UserListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // Set the current user so we can keep track of who logged in
     fun setCurrentUser(userName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -81,10 +84,12 @@ class UserListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // Clear login error
     fun clearLoginError() {
         _loginError.value = null
     }
 
+    // Edit a user's password
     fun editUser(userName: String, newPassword: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val body = mapOf("password" to newPassword)
@@ -98,6 +103,7 @@ class UserListViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // Clear reset password error
     fun clearResetPasswordError() {
         _resetPasswordError.value = null
     }
