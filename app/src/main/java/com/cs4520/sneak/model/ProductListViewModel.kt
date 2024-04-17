@@ -51,8 +51,10 @@ class ProductViewModel (application: Application) : AndroidViewModel(application
             currentCartItems.removeAll { it.name == shoe.name }
         } else {
             currentCartItems.add(shoe)
+            Log.d("testingtag", "adding shoe" + currentCartItems.size)
         }
         _cartItems.postValue(currentCartItems)
+        Log.d("testingtag", _cartItems.value?.size.toString())
     }
 
     private fun fetchShoes(page: Int? = null) {

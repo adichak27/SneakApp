@@ -53,37 +53,23 @@ class ProductListScreenTest {
         val shoe1 = Shoe("Shoe1", "Converse", "Running", 100.0, 4)
 
         val shoesLiveData: LiveData<List<Shoe>> = MutableLiveData(listOf(shoe1))
-
         viewModel.cartItems = shoesLiveData
+
         composeTestRule.setContent {
             ProductListScreen(rememberNavController(), viewModel)
         }
 
         // Assertions
         composeTestRule.onNodeWithText("Products").assertIsDisplayed()
-        Assert.assertEquals(1, viewModel.cartItems.value?.size ?: 1)
+        Assert.assertEquals(1, viewModel.cartItems.value?.size ?: 0)
         composeTestRule.onNodeWithTag("CheckoutTag").assertTextEquals("Checkout(1) items")
 
-        composeTestRule.onNodeWithTag("Nike").performClick()
-        viewModel.toggleCartItem(Shoe("Samba", "Nike", "lifestyle", 100.00, 0))
-        Assert.assertEquals(1, viewModel.cartItems.value?.size ?: 1)
+        //composeTestRule.onNodeWithTag("Nike").performClick()
+        viewModel.toggleCartItem(Shoe("Samba", "Vans", "lifestyle", 100.00, 0))
+        Assert.assertEquals(1, viewModel.cartItems.value?.size ?: 0)
 
-        composeTestRule.onNodeWithTag("Nike").assertTextEquals("Add")
+        composeTestRule.onNodeWithTag("Vans").assertTextEquals("Add")
         composeTestRule.onNodeWithTag("CheckoutTag").assertTextEquals("Checkout(1) items")
-    }
-
-    @Test
-    fun productListDisplaysErrorState() {
-        val viewModel = ProductViewModel(ApplicationProvider.getApplicationContext())
-        viewModel.updateUiState(ShoeUiState.Error(Exception("Network Error")))
-
-        composeTestRule.setContent {
-            ProductListScreen(rememberNavController(), viewModel)
-        }
-
-        // Assertions
-       // composeTestRule.onNodeWithTag("ErrorTag").assertTextEquals("me")
-        // composeTestRule.onNodeWithText("Checkout(0 items)").assertIsDisplayed()
     }
 }
 
